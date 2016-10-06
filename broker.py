@@ -19,6 +19,17 @@ class API(object):
         self.headers = self.client.headers
         self.headers['Authorization'] = 'Bearer ' + self.access_token
 
+    """Account info"""
+    def account_info(self):
+        return self.request('get', 'v1/accounts/{}'.format(self.account_id))
+
+    """Instrument info"""
+
+    def instruments_info(self, *args):
+        params = {'instruments': ','.join(args),
+                  'accountId': self.account_id}
+        return self.request('get', 'v1/instruments', **params)
+
     """Prices"""
 
     def get_prices(self, *args):
