@@ -7,10 +7,10 @@ def main():
         ACCESS_TOKEN = f.readline().strip()
 
     session = broker.API(ACCOUNT_ID, ACCESS_TOKEN)
-    strat = strategy.MACD()
+    strat = strategy.McGinleyDynamic()
     trader = robot.Robot(session, strat)
 
-    trader.trade('EUR_USD', 'M5', 14400)
+    trader.trade('USD_CAD', 'M5', 14400)
 
 if __name__ == '__main__':
     main()

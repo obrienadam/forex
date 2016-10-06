@@ -11,6 +11,9 @@ class Robot(object):
         self.account_currency = self.info['accountCurrency']
         self.leverage = 1./self.info['marginRate']
 
+        self.allow_shorts = True
+        self.allow_longs = True
+
         self.session.close_all_positions()
 
         self.max_risk_percent = max_risk_percent
@@ -23,12 +26,14 @@ class Robot(object):
         units = 0
         max_units = 5000
 
-        info = self.session.get_instruments_info(pair)
-        pip_value = info['pip']
-        max_trade_units = info['maxTradeUnits']
+        info = self.session.instruments_info(pair)
+        pip_value = info[0]['pip']
+        max_trade_units = info[0]['maxTradeUnits']
+
+        print 'pip value: {}, max units: {}'.format(pip_value, max_trade_units)
 
         while time < max_time:
-            prices = self.session.get_history(pair, period=period, count=50)
+            prices = self.session.get_history(pair, period=period, count=150)
             action = self.strategy.action(prices['candles'])
 
             max_trade_value = self.balance*self.max_risk_percent/100.
@@ -48,6 +53,9 @@ class Robot(object):
                     self.session.place_order(pair, abs(units + max_units), 'sell', 'market')
                     print 'Sold {} units of {}'.format(abs(units + max_units), pair)
                     units = -5000
+
+            elif action == 'hold':
+                print 'No action taken.'
 
             sleep(300)
             time += 300.

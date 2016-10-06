@@ -28,7 +28,7 @@ class API(object):
     def instruments_info(self, *args):
         params = {'instruments': ','.join(args),
                   'accountId': self.account_id}
-        return self.request('get', 'v1/instruments', **params)
+        return self.request('get', 'v1/instruments', **params)['instruments']
 
     """Prices"""
 

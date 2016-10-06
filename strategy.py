@@ -1,5 +1,6 @@
 import random
 import numpy as np
+import matplotlib.pyplot as plt
 
 class Strategy(object):
     def __init__(self, **kwargs):
@@ -70,6 +71,33 @@ class MACD(Strategy):
         if fma_ask[-1] > sma_ask[-1]:
             return 'buy'
         elif fma_bid[-1] < sma_bid[-1]:
+            return 'sell'
+        else:
+            return 'hold'
+
+class McGinleyDynamic(Strategy):
+    def __init__(self, **kwargs):
+        super(McGinleyDynamic, self).__init__(**kwargs)
+
+    def construct_mgd(self, candles, price_type = 'ask', N=10):
+        closes = np.array(self.extract_prices(candles, price_type=price_type)[1], dtype=float)
+        mgd = np.array([0]*len(closes), dtype=float)
+        mgd[:] = closes[:]
+
+        for i in xrange(1, len(mgd)):
+            mgd[i] = mgd[i - 1] + (closes[i] - mgd[i - 1])/(N*(closes[i]/mgd[i - 1])**4)
+
+        return mgd
+
+    def action(self, candles):
+        mgd_bid, mgd_ask = self.construct_mgd(candles, price_type='bid', N=10), self.construct_mgd(candles, price_type='ask', N=10)
+
+        d_mgd_bid = 3*mgd_bid[-1] - 4*mgd_bid[-2] + mgd_bid[-3]
+        d_mgd_ask = 3*mgd_ask[-1] - 4*mgd_ask[-2] + mgd_ask[-3]
+
+        if d_mgd_ask > 0:
+            return 'buy'
+        elif d_mgd_bid < 0:
             return 'sell'
         else:
             return 'hold'
