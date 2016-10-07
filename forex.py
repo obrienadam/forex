@@ -10,7 +10,7 @@ def main():
     strat = strategy.McGinleyDynamic()
     trader = robot.Robot(session, strat)
 
-    trader.trade('USD_CAD', 'M5', 14400)
+    trader.trade('EUR_GBP', 'M1', 14400)
 
 if __name__ == '__main__':
     main()

@@ -45,6 +45,8 @@ class Robot(object):
                     self.session.place_order(pair, max_units - units, 'buy', 'market')
                     print 'Bought {} units of {}'.format(max_units - units, pair)
                     units = 5000
+                else:
+                    print 'No action taken.'
 
             elif action == 'sell':
                 units_to_sell = abs(units + max_units)
@@ -53,12 +55,14 @@ class Robot(object):
                     self.session.place_order(pair, abs(units + max_units), 'sell', 'market')
                     print 'Sold {} units of {}'.format(abs(units + max_units), pair)
                     units = -5000
+                else:
+                    print 'No action taken'
 
             elif action == 'hold':
                 print 'No action taken.'
 
-            sleep(300)
-            time += 300.
+            sleep(60)
+            time += 60.
 
         self.session.close_all_positions()
 
